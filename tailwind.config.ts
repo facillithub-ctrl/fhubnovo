@@ -3,8 +3,8 @@ import type { Config } from 'tailwindcss'
 const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}', // <-- Importante
-    './app/**/*.{js,ts,jsx,tsx,mdx}',        // <-- Importante
+    './components/**/*.{js,ts,jsx,tsx,mdx}',
+    './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
     extend: {
@@ -12,7 +12,10 @@ const config: Config = {
         'brand-primary': '#190894',
         'brand-secondary': '#2e14ed',
         'brand-dark': '#111114',
-        'brand-light-gray': '#e0e0e2',
+        
+        // Cores-chave para o novo design
+        'brand-light-gray': '#e0e0e2', // Céu / Fundo claro
+        'brand-deep-dark': '#131315', // Header / Footer / Fundo escuro
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'sans-serif'],

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
+import Footer from '@/components/layout/Footer' // Importando o Footer
 
 // 1. Definição da fonte
 const inter = Inter({
@@ -11,15 +11,16 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-// 2. Metadados com o link para o manifesto
+// 2. Metadados
 export const metadata: Metadata = {
   title: 'Facillit Hub - Simplifica, Conecta, Potencializa',
   description: 'O ecossistema digital inteligente para organização, produtividade e educação.',
-  manifest: '/manifest.json', // <-- Este link é crucial
+  manifest: '/manifest.json',
 }
 
+// 3. Viewport (Corrigido para a nova cor)
 export const viewport: Viewport = {
-  themeColor: '#190894',
+  themeColor: '#131315',
 }
 
 export default function RootLayout({
@@ -28,11 +29,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    // 3. Uso da fonte e classes globais do Tailwind
     <html lang="pt-br" className={inter.variable}>
-      <body className="font-sans antialiased bg-white text-brand-dark">
+      {/* 4. Body ATUALIZADO */}
+      <body className="font-sans antialiased bg-brand-light-gray text-brand-deep-dark">
         <Header />
-        <main>
+        {/* Adiciona padding-bottom (pb-20 = 80px) para compensar o footer fixo */}
+        <main className="pb-20">
           {children}
         </main>
         <Footer />

@@ -2,131 +2,87 @@
 
 import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import Link from 'next/link'
 import Image from 'next/image'
 
-// Variantes da animação para o TEXTO
-const textContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2, // Começa depois da mascote
-    },
-  },
-}
-
-const textItemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 100,
-    },
-  },
-}
-
 export default function Hero() {
-  // 1. Criamos uma referência para a seção <section>
   const targetRef = useRef<HTMLDivElement>(null)
 
-  // 2. Medimos o progresso do scroll DENTRO desta seção
-  // 'start start' = quando o topo da seção bate no topo da tela
-  // 'end start' = quando o fundo da seção bate no topo da tela
+  // 1. Medir o scroll da seção inteira (do topo ao fundo)
+  // Isso é o que a "animação com java/dependência" faz.
+  // Estamos usando o 'framer-motion' que já está no seu package.json.
   const { scrollYProgress } = useScroll({
     target: targetRef,
-    offset: ['start start', 'end start'],
+    // Anima do início (start start) ao fim (end end) da seção
+    offset: ['start start', 'end end'],
   })
 
-  // 3. Transformamos o progresso do scroll (0 a 1) em movimento
-  
-  // A mascote se moverá 20% para baixo (y) e 25% para a direita (x)
-  // em uma velocidade diferente do scroll, criando o parallax.
-  const mascotY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
-  const mascotX = useTransform(scrollYProgress, [0, 1], ['0%', '25%'])
+  // 2. Animação da cor de fundo (O "Céu")
+  // Transição de cinza (#e0e0e2) para preto (#131315) na primeira metade do scroll
+  const backgroundColor = useTransform(
+    scrollYProgress,
+    [0, 0.5], // Começa no 0% do scroll, termina nos 50%
+    ['#e0e0e2', '#131315'] // De 'brand-light-gray' para 'brand-deep-dark'
+  )
 
-  // O texto se moverá 15% para baixo, mais rápido, para dar profundidade
-  const textY = useTransform(scrollYProgress, [0, 1], ['0%', '15%'])
+  // 3. Animação da cor do texto
+  // Transição de preto (#131315) para branco (#FFFFFF) para manter a legibilidade
+  const textColor = useTransform(
+    scrollYProgress,
+    [0.1, 0.4], // Começa um pouco depois e termina um pouco antes do fundo
+    ['#131315', '#FFFFFF']
+  )
+
+  // 4. Animação Parallax das Imagens
+  // Montanhas (fundo.svg): movem-se 20% para baixo (lento)
+  const mountainY = useTransform(scrollYProgress, [0, 1], ['0%', '20%'])
+  
+  // Árvores (arvore.svg): movem-se 60% para baixo (rápido, para dar profundidade)
+  const treeY = useTransform(scrollYProgress, [0, 1], ['0%', '60%'])
 
   return (
-    // Adicionamos a referência aqui e overflow-hidden
-    <section
+    // CAMADA 0: O FUNDO DA PÁGINA (CÉU ANIMADO)
+    <motion.section
       ref={targetRef}
-      className="relative flex min-h-screen items-center justify-center bg-brand-light-gray pt-32 overflow-hidden" // overflow-hidden é crucial
+      className="relative h-screen overflow-hidden" // Ocupa a tela inteira
+      style={{ backgroundColor }} // Aplica a cor de fundo animada
     >
-      {/* Container principal com layout de 2 colunas em telas grandes */}
-      <div className="container relative z-10 mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-4 md:grid-cols-2 sm:px-6 lg:px-8">
-        
-        {/* Coluna 1: Texto Animado (com parallax) */}
-        <motion.div
-          style={{ y: textY }} // Aplica o movimento parallax no container do texto
-          className="max-w-xl text-center md:text-left"
-          variants={textContainerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* H1 - Headline */}
-          <motion.h1
-            className="text-4xl font-extrabold tracking-tight text-brand-dark sm:text-5xl md:text-6xl"
-            variants={textItemVariants}
-          >
-            Tecnologia que <span className="text-brand-primary">simplifica</span>,{' '}
-            <span className="text-brand-primary">conecta</span> e{' '}
-            <span className="text-brand-primary">potencializa</span>.
-          </motion.h1>
-
-          {/* Sub-headline */}
-          <motion.p
-            className="mt-6 text-lg text-gray-600 sm:text-xl"
-            variants={textItemVariants}
-          >
-            O ecossistema digital inteligente criado para centralizar e integrar as
-            principais dimensões da vida moderna.
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 md:justify-start"
-            variants={textItemVariants}
-          >
-            <Link
-              href="#"
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-md border border-transparent bg-brand-secondary px-8 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-opacity-90"
-            >
-              Começar Agora
-            </Link>
-            <Link
-              href="#modulos" // Link para rolar para a próxima seção
-              className="inline-flex w-full sm:w-auto items-center justify-center rounded-md border border-brand-primary bg-transparent px-8 py-3 text-base font-medium text-brand-primary transition-colors hover:bg-brand-primary/10"
-            >
-              Conheça o Ecossistema
-            </Link>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Coluna 2: Mascote (Posicionada absolutamente para o parallax) */}
+      {/* CAMADA 1: AS MONTANHAS (Z-10) */}
       <motion.div
-        className="absolute -bottom-32 -right-32 w-2/3 max-w-2xl opacity-80 md:opacity-100 lg:-bottom-40 lg:w-1/2"
-        initial={{ opacity: 0, x: 100 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-        style={{ y: mascotY, x: mascotX }} // Aplica o parallax
+        className="absolute inset-0 z-10" // Camada 1
+        style={{ y: mountainY }}
       >
         <Image
-          // *** IMPORTANTE ***
-          // Você precisa colocar sua mascote com fundo transparente aqui
-          src="/images/mascote-hero.png" 
-          alt="Mascote Facillit Hub"
-          width={1024}
-          height={1024}
+          src="/images/hero/fundo.svg" // Imagem das montanhas
+          alt="Paisagem de montanhas ao fundo"
+          fill
+          className="object-cover object-bottom" // Cobre a div e alinha na base
           priority
-          className="object-contain"
         />
       </motion.div>
-    </section>
+
+      {/* CAMADA 2: O TEXTO "FACILLIT HUB" (Z-20) */}
+      <div className="relative z-20 flex h-full items-center justify-center">
+        <motion.h1
+          className="text-center text-5xl font-extrabold uppercase tracking-wider text-white md:text-7xl lg:text-8xl"
+          style={{ color: textColor }} // Aplica a cor de texto animada
+        >
+          Facillit Hub
+        </motion.h1>
+      </div>
+
+      {/* CAMADA 3: AS ÁRVORES DA FRENTE (Z-30) */}
+      <motion.div
+        className="absolute inset-0 z-30" // Camada 3 (NA FRENTE DO TEXTO)
+        style={{ y: treeY }}
+      >
+        <Image
+          src="/images/hero/arvore.svg" // Imagem das árvores
+          alt="Silhueta de árvores em primeiro plano"
+          fill
+          className="object-cover object-bottom" // Cobre a div e alinha na base
+          priority
+        />
+      </motion.div>
+    </motion.section>
   )
 }
