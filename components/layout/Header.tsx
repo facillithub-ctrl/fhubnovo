@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Fragment } from 'react'
+import { useState, Fragment } from 'react'
 import Link from 'next/link'
 import { Popover, Transition, Disclosure } from '@headlessui/react'
 import {
@@ -32,8 +32,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 
-// --- 1. DADOS PARA OS MENUS (Do seu Arquivo 2) ---
-
+// --- 1. DADOS PARA OS MENUS (Sem alteração) ---
 const ecosystemLinks = {
   students: [
     { name: 'Facillit Games', description: 'Aprendizado gamificado e adaptativo.', href: '#', icon: Gamepad2 },
@@ -78,7 +77,7 @@ const supportLinks = [
 ]
 
 
-// --- 2. COMPONENTES DE MENU REUTILIZÁVEIS (Adaptados para Tema Claro) ---
+// --- 2. COMPONENTES DE MENU REUTILIZÁVEIS (MUDANÇA: Tema Claro) ---
 
 function DropdownItem({
   item,
@@ -88,29 +87,32 @@ function DropdownItem({
   return (
     <Link
       href={item.href}
-      className="-m-3 flex items-start gap-4 rounded-lg p-3 transition duration-150 ease-in-out hover:bg-neutral-100" // MUDANÇA: hover:bg-neutral-800 -> hover:bg-neutral-100
+      // MUDANÇA: hover:bg-neutral-100 (cinza claro)
+      className="-m-3 flex items-start gap-4 rounded-lg p-3 transition duration-150 ease-in-out hover:bg-neutral-100"
     >
       <div className="flex-shrink-0">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100"> {/* MUDANÇA: bg-neutral-800 -> bg-neutral-100 */}
-          <item.icon className="h-6 w-6 text-neutral-700" /> {/* MUDANÇA: text-neutral-200 -> text-neutral-700 */}
+        {/* MUDANÇA: bg-neutral-100 (cinza claro) */}
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100"> 
+          {/* MUDANÇA: text-neutral-700 (preto/cinza escuro) */}
+          <item.icon className="h-6 w-6 text-neutral-700" /> 
         </div>
       </div>
       <div>
-        <p className="text-base font-medium text-neutral-900">{item.name}</p> {/* MUDANÇA: text-white -> text-neutral-900 */}
-        <p className="mt-1 text-sm text-neutral-600">{item.description}</p> {/* MUDANÇA: text-neutral-400 -> text-neutral-600 */}
+        {/* MUDANÇA: text-neutral-900 (preto) */}
+        <p className="text-base font-medium text-neutral-900">{item.name}</p>
+        {/* MUDANÇA: text-neutral-600 (cinza escuro) */}
+        <p className="mt-1 text-sm text-neutral-600">{item.description}</p> 
       </div>
     </Link>
   )
 }
 
-function SimplePopoverMenu({
+function PillPopoverMenu({
   buttonText,
   links,
-  isScrolled, // MUDANÇA: Recebe 'isScrolled' para estilizar o botão
 }: {
   buttonText: string
   links: { name: string; href: string; description: string; icon: React.ElementType }[]
-  isScrolled: boolean // MUDANÇA: Tipo de 'isScrolled'
 }) {
   return (
     <Popover className="static">
@@ -118,16 +120,16 @@ function SimplePopoverMenu({
         <>
           <Popover.Button
             className={clsx(
-              'group inline-flex items-center gap-2 px-4 py-2 text-sm font-medium outline-none transition-colors',
-              // MUDANÇA: Lógica de estilo de "botão" para "texto" adaptável ao scroll
-              isScrolled
-                ? 'text-neutral-800 hover:text-black'
-                : 'text-black hover:text-neutral-700',
-              open ? (isScrolled ? 'text-black' : 'text-neutral-700') : ''
+              'group inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors',
+              open
+                ? 'bg-neutral-600 text-white' 
+                : 'text-neutral-200 hover:text-white hover:bg-neutral-700/80'
             )}
           >
             <span>{buttonText}</span>
-            <ChevronDown className={clsx('h-4 w-4 transition-transform', open ? 'rotate-180' : '')} />
+            <ChevronDown
+              className={clsx('h-4 w-4 transition-transform', open ? 'rotate-180' : '')}
+            />
           </Popover.Button>
 
           <Transition
@@ -139,9 +141,11 @@ function SimplePopoverMenu({
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-1"
           >
+            {/* MUDANÇA: Painel do Dropdown (Tema Claro) */}
             <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0">
               <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                <div className="relative flex flex-col gap-4 bg-white p-7"> {/* MUDANÇA: bg-brand-deep-dark -> bg-white */}
+                {/* MUDANÇA: bg-white (fundo branco/cinza) */}
+                <div className="relative flex flex-col gap-4 bg-brand-light-gray p-7"> 
                   {links.map((item) => (
                     <DropdownItem key={item.name} item={item} />
                   ))}
@@ -160,71 +164,54 @@ function SimplePopoverMenu({
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-
-  // Lógica de scroll (igual ao Arquivo 2, pois é o que controla o estado)
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
 
   return (
     <header
       className={clsx(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        // MUDANÇA: Esta é a lógica de fundo do "Formato 1" (Tema Claro)
-        isScrolled
-          ? 'bg-white/95 shadow-md backdrop-blur-sm' // Após rolar
-          : 'bg-transparent' // No topo
+        'fixed top-0 left-0 right-0 z-50',
+        'bg-transparent'
       )}
     >
       <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-8">
           
+          {/* Coluna 1: Logo Flutuante (Preta) */}
           <div className="flex-1 md:flex">
              <Link href="/" className="flex flex-shrink-0 items-center">
               <span className="sr-only">Facillit Hub</span>
+              {/* MUDANÇA: Logo trocada. 
+                O caminho que você passou ('public/images/logos/F/isologo.png') não foi encontrado.
+                Estou usando 'public/images/PNG/isologo/vec-preta F.png' como exemplo. 
+                Por favor, ajuste o 'src' para o caminho correto que você deseja.
+              */}
               <img
                 className="h-8 w-auto"
-                // MUDANÇA: Lógica do logo adaptada para o Formato 1 (fundo claro)
-                // Assumindo que o logo preto funciona tanto no topo (transparente sobre conteúdo claro) quanto no scroll (fundo branco)
-                src={"/images/SVG/isologo/vec-preta F.svg"}
+                src={"/images/logos/F/isologo.png"} // MUDANÇA AQUI
                 alt="Facillit Hub Logo"
               />
             </Link>
           </div>
 
-          {/* Coluna 2: Navegação Desktop Central (Estilo Texto) */}
-          <div className="hidden md:flex flex-none items-center justify-center gap-2">
+          {/* Coluna 2: Navegação Central (Pill Escuro) */}
+          <div className="hidden md:flex flex-none items-center justify-center gap-1 rounded-full bg-brand-deep-dark px-3 py-2 shadow-lg">
             
             <Link
               href="/"
-              // MUDANÇA: Estilo de "botão" para "texto"
-              className={clsx(
-                'whitespace-nowrap px-4 py-2 text-sm font-medium transition-colors',
-                isScrolled
-                  ? 'text-neutral-800 hover:text-black'
-                  : 'text-black hover:text-neutral-700'
-              )}
+              className="whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-neutral-200 transition-colors hover:bg-neutral-700/80 hover:text-white"
             >
               Início
             </Link>
 
-            {/* Dropdown Ecossistema (Estilo Texto) */}
+            {/* Dropdown Ecossistema (Texto Claro) */}
             <Popover className="static">
               {({ open }) => (
                 <>
                   <Popover.Button
                     className={clsx(
-                      'group inline-flex items-center gap-2 px-4 py-2 text-sm font-medium outline-none transition-colors',
-                      // MUDANÇA: Estilo de "botão" para "texto"
-                      isScrolled
-                        ? 'text-neutral-800 hover:text-black'
-                        : 'text-black hover:text-neutral-700',
-                      open ? (isScrolled ? 'text-black' : 'text-neutral-700') : ''
+                      'group inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium outline-none transition-colors',
+                      open
+                        ? 'bg-neutral-600 text-white' 
+                        : 'text-neutral-200 hover:text-white hover:bg-neutral-700/80'
                     )}
                   >
                     <span>Ecossistema</span>
@@ -240,11 +227,14 @@ export default function Header() {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
+                    {/* MUDANÇA: Painel do Dropdown (Tema Claro) */}
                     <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-5xl -translate-x-1/2 transform px-4 sm:px-0">
                       <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                        <div className="relative grid gap-x-12 gap-y-12 bg-white p-10 lg:grid-cols-3"> {/* MUDANÇA: bg-brand-deep-dark -> bg-white */}
+                        {/* MUDANÇA: bg-white */}
+                        <div className="relative grid gap-x-12 gap-y-12 bg-brand-light-gray p-6 lg:grid-cols-3">
                           <div className="flex flex-col gap-5">
-                            <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">FOR STUDENTS</h3> {/* MUDANÇA: text-gray-400 -> text-gray-500 */}
+                            {/* MUDANÇA: text-gray-500 */}
+                            <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">FOR STUDENTS</h3>
                             {ecosystemLinks.students.map((item) => <DropdownItem key={item.name} item={item} />)}
                           </div>
                           <div className="flex flex-col gap-10">
@@ -277,42 +267,34 @@ export default function Header() {
 
             <Link
               href="#"
-              // MUDANÇA: Estilo de "botão" para "texto"
-              className={clsx(
-                'whitespace-nowrap px-4 py-2 text-sm font-medium transition-colors',
-                isScrolled
-                  ? 'text-neutral-800 hover:text-black'
-                  : 'text-black hover:text-neutral-700'
-              )}
+              className="whitespace-nowrap rounded-md px-4 py-2 text-sm font-medium text-neutral-200 transition-colors hover:bg-neutral-700/80 hover:text-white"
             >
               Preços
             </Link>
 
-            {/* MUDANÇA: Passando 'isScrolled' para os componentes */}
-            <SimplePopoverMenu buttonText="Recursos" links={resourcesLinks} isScrolled={isScrolled} />
-            <SimplePopoverMenu buttonText="Suporte" links={supportLinks} isScrolled={isScrolled} />
+            <PillPopoverMenu buttonText="Recursos" links={resourcesLinks} />
+            <PillPopoverMenu buttonText="Suporte" links={supportLinks} />
           </div>
 
-          {/* Coluna 3: CTAs (Botão "Criar conta" branco) */}
+          {/* Coluna 3: CTAs Flutuantes */}
           <div className="hidden flex-1 items-center justify-end md:flex">
             
             <Link
               href="#"
               className={clsx(
                 'whitespace-nowrap px-4 py-2 text-sm font-medium transition-colors',
-                // MUDANÇA: Cor do link "Entrar" adaptada ao fundo claro
-                isScrolled
-                  ? 'text-neutral-800 hover:text-black' // Cor no header branco
-                  : 'text-black hover:text-neutral-700'  // Cor no header transparente
+                'text-black hover:text-neutral-700'
               )}
             >
               Entrar
             </Link>
             
-            {/* Este botão CTA do Arquivo 2 já funciona bem no tema claro */}
             <Link
               href="#"
-              className="ml-4 inline-flex items-center justify-center whitespace-nowrap rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-brand-deep-dark shadow-sm transition-colors hover:bg-neutral-200"
+              className={clsx(
+                'ml-4 inline-flex items-center justify-center whitespace-nowrap rounded-full border border-transparent px-5 py-2 text-sm font-medium shadow-lg transition-colors',
+                'bg-brand-deep-dark text-white hover:bg-neutral-800'
+              )}
             >
               Criar conta
             </Link>
@@ -323,9 +305,8 @@ export default function Header() {
             <button
               onClick={() => setIsMobileMenuOpen(true)}
               className={clsx(
-                'inline-flex items-center justify-center rounded-md p-2 hover:bg-black/5', // MUDANÇA: hover:bg-white/10 -> hover:bg-black/5
-                // MUDANÇA: Cor do ícone adaptada ao fundo claro
-                isScrolled ? 'text-neutral-800' : 'text-black'
+                'inline-flex items-center justify-center rounded-md p-2',
+                'text-black hover:bg-black/5'
               )}
             >
               <Menu className="h-6 w-6" />
@@ -334,7 +315,8 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* --- 4. PAINEL DO MENU MOBILE (Adaptado para Tema Claro) --- */}
+      {/* --- 4. PAINEL DO MENU MOBILE (MUDANÇA: Tema Claro) --- */}
+      {/* O menu mobile agora também terá o tema claro para ser consistente */}
       <Transition
         show={isMobileMenuOpen}
         as={Fragment}
@@ -346,13 +328,15 @@ export default function Header() {
         leaveTo="opacity-0 scale-95"
       >
         <div className="absolute inset-x-0 top-0 z-50 origin-top-right transform p-2 transition md:hidden">
-          <div className="divide-y-2 divide-neutral-100 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"> {/* MUDANÇA: Tema escuro -> Tema claro */}
+          {/* MUDANÇA: Fundo branco/cinza claro */}
+          <div className="divide-y-2 divide-neutral-100 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
             <div className="px-5 pt-5 pb-6">
               <div className="flex items-center justify-end">
                 <div className="-mr-2">
                   <button
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="inline-flex items-center justify-center rounded-md bg-white p-2 text-neutral-500 hover:bg-neutral-100" // MUDANÇA: Tema escuro -> Tema claro
+                    // MUDANÇA: Tema claro
+                    className="inline-flex items-center justify-center rounded-md bg-white p-2 text-neutral-500 hover:bg-neutral-100"
                   >
                     <X className="h-6 w-6" />
                   </button>
@@ -362,7 +346,8 @@ export default function Header() {
                 <nav className="grid gap-y-7">
                   <Link
                     href="/"
-                    className="-m-3 block rounded-md p-3 text-base font-medium text-neutral-900 hover:bg-neutral-100" // MUDANÇA: text-white -> text-neutral-900
+                    // MUDANÇA: Tema claro
+                    className="-m-3 block rounded-md p-3 text-base font-medium text-neutral-900 hover:bg-neutral-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Início
@@ -371,7 +356,8 @@ export default function Header() {
                   <Disclosure as="div" className="-m-3">
                     {({ open }) => (
                       <>
-                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100"> {/* MUDANÇA: text-white -> text-neutral-900 */}
+                        {/* MUDANÇA: Tema claro */}
+                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100">
                           Ecossistemas
                           <ChevronDown className={clsx(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')} />
                         </Disclosure.Button>
@@ -387,7 +373,8 @@ export default function Header() {
                               key={item.name}
                               as={Link}
                               href={item.href}
-                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100" // MUDANÇA: text-neutral-300 -> text-neutral-600
+                              // MUDANÇA: Tema claro
+                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
                             >
                               {item.name}
                             </Disclosure.Button>
@@ -399,7 +386,8 @@ export default function Header() {
 
                   <Link
                     href="#"
-                    className="-m-3 block rounded-md p-3 text-base font-medium text-neutral-900 hover:bg-neutral-100" // MUDANÇA: text-white -> text-neutral-900
+                    // MUDANÇA: Tema claro
+                    className="-m-3 block rounded-md p-3 text-base font-medium text-neutral-900 hover:bg-neutral-100"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     Preços
@@ -408,7 +396,8 @@ export default function Header() {
                   <Disclosure as="div" className="-m-3">
                     {({ open }) => (
                       <>
-                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100"> {/* MUDANÇA: text-white -> text-neutral-900 */}
+                        {/* MUDANÇA: Tema claro */}
+                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100">
                           Recursos
                           <ChevronDown className={clsx(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')} />
                         </Disclosure.Button>
@@ -418,7 +407,8 @@ export default function Header() {
                               key={item.name}
                               as={Link}
                               href={item.href}
-                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100" // MUDANÇA: text-neutral-300 -> text-neutral-600
+                              // MUDANÇA: Tema claro
+                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
                             >
                               {item.name}
                             </Disclosure.Button>
@@ -431,7 +421,8 @@ export default function Header() {
                   <Disclosure as="div" className="-m-3">
                     {({ open }) => (
                       <>
-                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100"> {/* MUDANÇA: text-white -> text-neutral-900 */}
+                        {/* MUDANÇA: Tema claro */}
+                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-neutral-900 hover:bg-neutral-100">
                           Suporte
                           <ChevronDown className={clsx(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')} />
                         </Disclosure.Button>
@@ -441,7 +432,8 @@ export default function Header() {
                               key={item.name}
                               as={Link}
                               href={item.href}
-                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100" // MUDANÇA: text-neutral-300 -> text-neutral-600
+                              // MUDANÇA: Tema claro
+                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
                             >
                               {item.name}
                             </Disclosure.Button>
@@ -456,16 +448,17 @@ export default function Header() {
             
             <div className="space-y-6 py-6 px-5">
               <div>
+                {/* MUDANÇA: Botão CTA escuro (como na imagem) */}
                 <a
                   href="#"
-                  className="flex w-full items-center justify-center rounded-md border border-transparent bg-white px-4 py-2 text-base font-medium text-brand-deep-dark shadow-sm hover:bg-neutral-200"
-                  // O botão CTA principal (branco) já estava bom
+                  className="flex w-full items-center justify-center rounded-md border border-transparent bg-brand-deep-dark px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-neutral-800"
                 >
                   Criar conta
                 </a>
-                <p className="mt-6 text-center text-base font-medium text-neutral-500"> {/* MUDANÇA: text-neutral-400 -> text-neutral-500 */}
+                {/* MUDANÇA: Tema claro */}
+                <p className="mt-6 text-center text-base font-medium text-neutral-500">
                   Já tem uma conta?{' '}
-                  <a href="#" className="text-neutral-800 hover:text-black"> {/* MUDANÇA: text-neutral-200 -> text-neutral-800 */}
+                  <a href="#" className="text-neutral-800 hover:text-black">
                     Entrar
                   </a>
                 </p>
