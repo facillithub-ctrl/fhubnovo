@@ -2,34 +2,46 @@
 
 import { useState, useEffect, Fragment } from 'react'
 import Link from 'next/link'
+import Image from 'next/image' // Importado para usar a logo
 import { Popover, Transition, Disclosure } from '@headlessui/react'
 import {
   Menu,
   X,
   ChevronDown,
-  BookOpen, // Edu
-  Gamepad2, // Games
-  Edit3, // Write
-  Calendar, // Day
-  Banknote, // Finances
-  Users, // Corporativas
-  Building, // Gestão
-  Library, // Library
-  Sparkles, // Coach
-  ClipboardCheck, // Test
-  PlayCircle, // Play
+  // --- Ícones para os Menus ---
+  Home,
+  // Ecossistema
+  Gamepad2,
+  Edit3,
+  Library,
+  PlayCircle,
+  ClipboardCheck,
+  Sparkles,
+  BookOpen,
+  Briefcase,
+  Building,
+  Database,
+  Share2,
+  Accessibility,
+  Users,
+  CreditCard,
+  Calendar,
+  Banknote,
+  Beaker, // Para Lab
+  // Recursos
+  FileText,
+  Phone,
+  Shield,
+  FileSearch,
+  // Suporte
+  HelpCircle,
 } from 'lucide-react'
 import clsx from 'clsx'
 
-// NOVOS DADOS (Divididos em 3 colunas)
-const solutions = {
-  column1: [
-    {
-      name: 'Facillit Edu',
-      description: 'Gestão acadêmica e planos de aula.',
-      href: '#',
-      icon: BookOpen,
-    },
+// --- 1. NOVOS DADOS PARA OS MENUS (COM DESCRIÇÕES) ---
+
+const ecosystemLinks = {
+  students: [
     {
       name: 'Facillit Games',
       description: 'Aprendizado gamificado e adaptativo.',
@@ -38,27 +50,13 @@ const solutions = {
     },
     {
       name: 'Facillit Write',
-      description: 'Produção e correção de textos.',
+      description: 'Produção e correção de textos com IA.',
       href: '#',
       icon: Edit3,
     },
-  ],
-  column2: [
-    {
-      name: 'Facillit Day',
-      description: 'Produtividade e rotina pessoal.',
-      href: '#',
-      icon: Calendar,
-    },
-    {
-      name: 'Facillit Finances',
-      description: 'Controle financeiro pessoal.',
-      href: '#',
-      icon: Banknote,
-    },
     {
       name: 'Facillit Library',
-      description: 'Portfólios e leituras guiadas.',
+      description: 'Portfólios e bibliotecas de conteúdo.',
       href: '#',
       icon: Library,
     },
@@ -68,54 +66,174 @@ const solutions = {
       href: '#',
       icon: PlayCircle,
     },
-  ],
-  column3: [
-    {
-      name: 'Gestão Pedagógica (Escolas)',
-      description: 'Integração de notas e currículo.',
-      href: '#',
-      icon: Building,
-    },
-    {
-      name: 'Soluções Corporativas',
-      description: 'Produtividade e bem-estar.',
-      href: '#',
-      icon: Users,
-    },
-    {
-      name: 'Facillit Coach & Career',
-      description: 'Orientação vocacional e metas.',
-      href: '#',
-      icon: Sparkles,
-    },
     {
       name: 'Facillit Test',
       description: 'Criação de avaliações e simulados.',
       href: '#',
       icon: ClipboardCheck,
     },
+    {
+      name: 'Facillit C&C',
+      description: 'Orientação vocacional e de carreira.',
+      href: '#',
+      icon: Sparkles,
+    },
+  ],
+  schools: [
+    {
+      name: 'Facillit Edu',
+      description: 'Gestão acadêmica e planos de aula.',
+      href: '#',
+      icon: BookOpen,
+    },
+    {
+      name: 'Facillit Lab',
+      description: 'Laboratório de projetos e inovação.',
+      href: '#',
+      icon: Beaker,
+    },
+  ],
+  startups: [
+    {
+      name: 'Facillit Center',
+      description: 'Gestão integrada para sua startup.',
+      href: '#',
+      icon: Building,
+    },
+    {
+      name: 'Facillit Host',
+      description: 'Serviços de nuvem e hospedagem.',
+      href: '#',
+      icon: Database,
+    },
+    {
+      name: 'Facillit API',
+      description: 'Integre seus apps ao nosso ecossistema.',
+      href: '#',
+      icon: Share2,
+    },
+  ],
+  enterprise: [
+    {
+      name: 'Facillit Acess',
+      description: 'Soluções de acessibilidade digital.',
+      href: '#',
+      icon: Accessibility,
+    },
+    {
+      name: 'Facillit People',
+      description: 'Gestão de talentos e bem-estar.',
+      href: '#',
+      icon: Users,
+    },
+    {
+      name: 'Facillit Card',
+      description: 'Solução de pagamentos corporativos.',
+      href: '#',
+      icon: CreditCard,
+    },
+  ],
+  global: [
+    {
+      name: 'Facillit Day',
+      description: 'Produtividade e rotina pessoal.',
+      href: '#',
+      icon: Calendar,
+    },
+    {
+      name: 'Facillit Finances',
+      description: 'Controle financeiro inteligente.',
+      href: '#',
+      icon: Banknote,
+    },
   ],
 }
 
+const resourcesLinks = [
+  {
+    name: 'Termos de Uso',
+    description: 'Regras de utilização da plataforma.',
+    href: '#',
+    icon: FileText,
+  },
+  {
+    name: 'Políticas de Privacidade',
+    description: 'Nossas políticas de privacidade.',
+    href: '#',
+    icon: Shield,
+  },
+  {
+    name: 'Uso de Dados',
+    description: 'Como tratamos seus dados.',
+    href: '#',
+    icon: FileSearch,
+  },
+  {
+    name: 'Acessibilidade',
+    description: 'Nosso compromisso com a inclusão.',
+    href: '#',
+    icon: Accessibility,
+  },
+  {
+    name: 'Trabalhe Conosco',
+    description: 'Faça parte da nossa equipe.',
+    href: '#',
+    icon: Briefcase,
+  },
+]
+
+const supportLinks = [
+  {
+    name: 'Fale Conosco',
+    description: 'Entre em contato por e-mail ou chat.',
+    href: '#',
+    icon: Phone,
+  },
+  {
+    name: 'Perguntas Frequentes (FAQ)',
+    description: 'Respostas para suas dúvidas.',
+    href: '#',
+    icon: HelpCircle,
+  },
+  {
+    name: 'Equipe de Vendas',
+    description: 'Converse com um especialista.',
+    href: '#',
+    icon: Users,
+  },
+]
+
+// --- 2. COMPONENTE LOGO ATUALIZADO ---
 function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="8" fill="url(#grad)" />
-        <defs>
-          <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
-            <stop stopColor="#190894" />
-            <stop offset="1" stopColor="#2e14ed" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <span className="text-xl font-bold text-brand-dark">Facillit Hub</span>
+    <Link href="/" className="flex flex-shrink-0 items-center">
+      {/* Imagem da logo vinda da pasta public */}
+      <Image
+        src="/images/SVG/logotipo/azul.svg"
+        alt="Facillit Hub Logo"
+        width={140} // Largura original da logo
+        height={32} // Altura original da logo
+        priority // Otimiza o carregamento da logo
+      />
     </Link>
   )
 }
 
-// Componente para o item do Dropdown (para ficar mais limpo)
-function SolutionItem({ item }: { item: typeof solutions.column1[0] }) {
+// --- 3. COMPONENTES DE MENU REUTILIZÁVEIS (COM DESCRIÇÃO) ---
+
+/**
+ * Componente de item de menu com ícone, nome e descrição
+ */
+function DropdownItem({
+  item,
+}: {
+  item: {
+    name: string
+    href: string
+    description: string
+    icon: React.ElementType
+  }
+}) {
   return (
     <Link
       href={item.href}
@@ -127,6 +245,7 @@ function SolutionItem({ item }: { item: typeof solutions.column1[0] }) {
           <item.icon className="h-6 w-6 text-brand-primary" />
         </div>
       </div>
+      {/* Nome e Descrição */}
       <div>
         <p className="text-base font-medium text-brand-dark">{item.name}</p>
         <p className="mt-1 text-sm text-gray-500">{item.description}</p>
@@ -135,11 +254,77 @@ function SolutionItem({ item }: { item: typeof solutions.column1[0] }) {
   )
 }
 
+/**
+ * Componente de Popover genérico para menus simples (Recursos, Suporte)
+ */
+function SimplePopoverMenu({
+  buttonText,
+  links,
+}: {
+  buttonText: string
+  links: {
+    name: string
+    href: string
+    description: string
+    icon: React.ElementType
+  }[]
+}) {
+  return (
+    // *** CORREÇÃO AQUI: Mudado de 'relative' para 'static' ***
+    <Popover className="static">
+      {({ open }) => (
+        <>
+          <Popover.Button
+            className={clsx(
+              'group inline-flex items-center gap-1 rounded-md px-3 py-2 text-base font-medium outline-none transition-colors',
+              open
+                ? 'text-brand-primary'
+                : 'text-brand-dark hover:text-brand-primary'
+            )}
+          >
+            <span>{buttonText}</span>
+            <ChevronDown
+              className={clsx(
+                'h-5 w-5 transition-transform',
+                open ? 'rotate-180' : ''
+              )}
+            />
+          </Popover.Button>
+
+          <Transition
+            as={Fragment}
+            enter="transition ease-out duration-200"
+            enterFrom="opacity-0 translate-y-1"
+            enterTo="opacity-100 translate-y-0"
+            leave="transition ease-in duration-150"
+            leaveFrom="opacity-100 translate-y-0"
+            leaveTo="opacity-0 translate-y-1"
+          >
+            {/* Este painel agora se centraliza na TELA, não no botão */}
+            <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-sm -translate-x-1/2 transform px-4 sm:px-0">
+              <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                {/* Padding e gap aumentados para "alívio" */}
+                <div className="relative flex flex-col gap-4 bg-white p-7">
+                  {links.map((item) => (
+                    <DropdownItem key={item.name} item={item} />
+                  ))}
+                </div>
+              </div>
+            </Popover.Panel>
+          </Transition>
+        </>
+      )}
+    </Popover>
+  )
+}
+
+// --- 4. COMPONENTE HEADER PRINCIPAL ---
+
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  // Efeito de scroll (você pediu, já está aqui)
+  // Efeito de scroll para transparência
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
@@ -152,22 +337,31 @@ export default function Header() {
     <header
       className={clsx(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        // Efeito de scroll:
         isScrolled
-          ? 'bg-white/90 shadow-md backdrop-blur-sm'
-          : 'bg-transparent'
+          ? 'bg-white/90 shadow-md backdrop-blur-sm' // Efeito de transparência/blur quando scrollado
+          : 'bg-transparent' // Totalmente transparente no topo
       )}
     >
       <nav className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        {/* --- LAYOUT ATUALIZADO (Esquerda, Centro, Direita) --- */}
+        <div className="flex h-20 items-center justify-between gap-8">
+          {/* Esquerda: Logo */}
           <div className="flex-shrink-0">
             <Logo />
           </div>
 
-          {/* Navegação Desktop */}
-          <div className="hidden md:flex md:items-center md:gap-8">
-            <Popover className="relative">
-              {/* --- LINHA CORRIGIDA ABAIXO --- */}
+          {/* Centro: Navegação Desktop */}
+          <div className="hidden md:flex flex-1 items-center justify-center gap-6 lg:gap-8">
+            <Link
+              href="/"
+              className="px-3 py-2 text-base font-medium text-brand-dark transition-colors hover:text-brand-primary"
+            >
+              Início
+            </Link>
+
+            {/* Dropdown Ecossistemas (Largo e com colunas) */}
+            {/* *** CORREÇÃO AQUI: Mudado de 'relative' para 'static' *** */}
+            <Popover className="static">
               {({ open }) => (
                 <>
                   <Popover.Button
@@ -175,11 +369,10 @@ export default function Header() {
                       'group inline-flex items-center gap-1 rounded-md px-3 py-2 text-base font-medium outline-none transition-colors',
                       open
                         ? 'text-brand-primary'
-                        : 'text-brand-dark hover:text-brand-primary',
-                      isScrolled ? '' : 'text-brand-dark' // Garante que o texto seja legível no fundo transparente
+                        : 'text-brand-dark hover:text-brand-primary'
                     )}
                   >
-                    <span>Ecossistema</span>
+                    <span>Ecossistemas</span>
                     <ChevronDown
                       className={clsx(
                         'h-5 w-5 transition-transform',
@@ -197,36 +390,57 @@ export default function Header() {
                     leaveFrom="opacity-100 translate-y-0"
                     leaveTo="opacity-0 translate-y-1"
                   >
-                    {/* Alterado para 3 colunas (max-w-4xl e grid-cols-3) */}
-                    <Popover.Panel className="absolute -left-1/2 z-10 mt-3 w-screen max-w-4xl transform px-4 sm:px-0">
+                    {/* Este painel agora se centraliza na TELA, não no botão */}
+                    <Popover.Panel className="absolute left-1/2 z-10 mt-3 w-screen max-w-5xl -translate-x-1/2 transform px-4 sm:px-0">
                       <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
-                        <div className="relative grid gap-8 bg-white p-7 lg:grid-cols-3">
-                          {/* Coluna 1 */}
-                          <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-semibold tracking-wide text-gray-500">
-                              PARA ESTUDANTES
+                        {/* Padding e gaps aumentados para "alívio" */}
+                        <div className="relative grid gap-x-12 gap-y-12 bg-white p-10 lg:grid-cols-3">
+                          {/* Coluna 1: Students */}
+                          <div className="flex flex-col gap-5">
+                            <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">
+                              FOR STUDENTS
                             </h3>
-                            {solutions.column1.map((item) => (
-                              <SolutionItem key={item.name} item={item} />
+                            {ecosystemLinks.students.map((item) => (
+                              <DropdownItem key={item.name} item={item} />
                             ))}
                           </div>
-                          {/* Coluna 2 */}
-                          <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-semibold tracking-wide text-gray-500">
-                              PARA O DIA A DIA
-                            </h3>
-                            {solutions.column2.map((item) => (
-                              <SolutionItem key={item.name} item={item} />
-                            ))}
+                          {/* Coluna 2: Schools & Startups */}
+                          <div className="flex flex-col gap-10">
+                            <div className="flex flex-col gap-5">
+                              <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">
+                                FOR SCHOOLS
+                              </h3>
+                              {ecosystemLinks.schools.map((item) => (
+                                <DropdownItem key={item.name} item={item} />
+                              ))}
+                            </div>
+                            <div className="flex flex-col gap-5">
+                              <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">
+                                FOR STARTUPS
+                              </h3>
+                              {ecosystemLinks.startups.map((item) => (
+                                <DropdownItem key={item.name} item={item} />
+                              ))}
+                            </div>
                           </div>
-                          {/* Coluna 3 */}
-                          <div className="flex flex-col gap-4">
-                            <h3 className="text-sm font-semibold tracking-wide text-gray-500">
-                              PARA INSTITUIÇÕES
-                            </h3>
-                            {solutions.column3.map((item) => (
-                              <SolutionItem key={item.name} item={item} />
-                            ))}
+                          {/* Coluna 3: Enterprise & Global */}
+                          <div className="flex flex-col gap-10">
+                            <div className="flex flex-col gap-5">
+                              <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">
+                                FOR ENTERPRISE
+                              </h3>
+                              {ecosystemLinks.enterprise.map((item) => (
+                                <DropdownItem key={item.name} item={item} />
+                              ))}
+                            </div>
+                            <div className="flex flex-col gap-5">
+                              <h3 className="mb-2 text-sm font-semibold tracking-wide text-gray-500">
+                                GLOBAL
+                              </h3>
+                              {ecosystemLinks.global.map((item) => (
+                                <DropdownItem key={item.name} item={item} />
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -238,32 +452,26 @@ export default function Header() {
 
             <Link
               href="#"
-              className={clsx(
-                'px-3 py-2 text-base font-medium transition-colors hover:text-brand-primary',
-                isScrolled ? 'text-brand-dark' : 'text-brand-dark'
-              )}
-            >
-              Soluções
-            </Link>
-            <Link
-              href="#"
-              className={clsx(
-                'px-3 py-2 text-base font-medium transition-colors hover:text-brand-primary',
-                isScrolled ? 'text-brand-dark' : 'text-brand-dark'
-              )}
+              className="px-3 py-2 text-base font-medium text-brand-dark transition-colors hover:text-brand-primary"
             >
               Preços
             </Link>
+
+            {/* Dropdown Recursos */}
+            <SimplePopoverMenu
+              buttonText="Recursos"
+              links={resourcesLinks}
+            />
+
+            {/* Dropdown Suporte */}
+            <SimplePopoverMenu buttonText="Suporte" links={supportLinks} />
           </div>
 
-          {/* CTAs Desktop (Agora estilizados) */}
-          <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
+          {/* Direita: CTAs Desktop */}
+          <div className="hidden items-center justify-end md:flex">
             <Link
               href="#"
-              className={clsx(
-                'whitespace-nowrap px-4 py-2 text-base font-medium transition-colors hover:text-brand-primary',
-                isScrolled ? 'text-brand-dark' : 'text-brand-dark'
-              )}
+              className="whitespace-nowrap px-4 py-2 text-base font-medium text-brand-dark transition-colors hover:text-brand-primary"
             >
               Login
             </Link>
@@ -279,10 +487,7 @@ export default function Header() {
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(true)}
-              className={clsx(
-                'inline-flex items-center justify-center rounded-md p-2',
-                isScrolled ? 'text-gray-400 hover:bg-gray-100' : 'text-brand-dark'
-              )}
+              className="inline-flex items-center justify-center rounded-md p-2 text-brand-dark/70 hover:bg-gray-100"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -290,7 +495,7 @@ export default function Header() {
         </div>
       </nav>
 
-      {/* --- Painel do Menu Mobile --- */}
+      {/* --- 5. PAINEL DO MENU MOBILE ATUALIZADO --- */}
       <Transition
         show={isMobileMenuOpen}
         as={Fragment}
@@ -316,21 +521,35 @@ export default function Header() {
                 </div>
               </div>
               <div className="mt-6">
-                <nav className="grid gap-y-8">
+                <nav className="grid gap-y-7">
+                  <Link
+                    href="/"
+                    className="-m-3 block rounded-md p-3 text-base font-medium text-brand-dark hover:bg-gray-50"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Início
+                  </Link>
+
+                  {/* Disclosure Ecossistemas (Mobile) */}
                   <Disclosure as="div" className="-m-3">
                     {({ open }) => (
                       <>
                         <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-brand-dark hover:bg-gray-50">
-                          Ecossistema
+                          Ecossistemas
                           <ChevronDown
-                            className={clsx(open ? 'rotate-180' : '', 'h-5 w-5 flex-none')}
+                            className={clsx(
+                              open ? 'rotate-180' : '',
+                              'h-5 w-5 flex-none'
+                            )}
                           />
                         </Disclosure.Button>
                         <Disclosure.Panel className="mt-2 space-y-2 pl-4">
                           {[
-                            ...solutions.column1,
-                            ...solutions.column2,
-                            ...solutions.column3,
+                            ...ecosystemLinks.students,
+                            ...ecosystemLinks.schools,
+                            ...ecosystemLinks.startups,
+                            ...ecosystemLinks.enterprise,
+                            ...ecosystemLinks.global,
                           ].map((item) => (
                             <Disclosure.Button
                               key={item.name}
@@ -346,15 +565,75 @@ export default function Header() {
                     )}
                   </Disclosure>
 
-                  <Link href="#" className="-m-3 block rounded-md p-3 text-base font-medium text-brand-dark hover:bg-gray-50">
-                    Soluções
-                  </Link>
-                  <Link href="#" className="-m-3 block rounded-md p-3 text-base font-medium text-brand-dark hover:bg-gray-50">
+                  <Link
+                    href="#"
+                    className="-m-3 block rounded-md p-3 text-base font-medium text-brand-dark hover:bg-gray-50"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
                     Preços
                   </Link>
+
+                  {/* Disclosure Recursos (Mobile) */}
+                  <Disclosure as="div" className="-m-3">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-brand-dark hover:bg-gray-50">
+                          Recursos
+                          <ChevronDown
+                            className={clsx(
+                              open ? 'rotate-180' : '',
+                              'h-5 w-5 flex-none'
+                            )}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="mt-2 space-y-2 pl-4">
+                          {resourcesLinks.map((item) => (
+                            <Disclosure.Button
+                              key={item.name}
+                              as={Link}
+                              href={item.href}
+                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                              {item.name}
+                            </Disclosure.Button>
+                          ))}
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
+
+                  {/* Disclosure Suporte (Mobile) */}
+                  <Disclosure as="div" className="-m-3">
+                    {({ open }) => (
+                      <>
+                        <Disclosure.Button className="flex w-full items-center justify-between rounded-lg py-2 pl-3 pr-3-5 text-base font-medium text-brand-dark hover:bg-gray-50">
+                          Suporte
+                          <ChevronDown
+                            className={clsx(
+                              open ? 'rotate-180' : '',
+                              'h-5 w-5 flex-none'
+                            )}
+                          />
+                        </Disclosure.Button>
+                        <Disclosure.Panel className="mt-2 space-y-2 pl-4">
+                          {supportLinks.map((item) => (
+                            <Disclosure.Button
+                              key={item.name}
+                              as={Link}
+                              href={item.href}
+                              className="block rounded-lg py-2 pl-6 pr-3 text-sm font-medium text-gray-600 hover:bg-gray-50"
+                            >
+                              {item.name}
+                            </Disclosure.Button>
+                          ))}
+                        </Disclosure.Panel>
+                      </>
+                    )}
+                  </Disclosure>
                 </nav>
               </div>
             </div>
+            {/* Botões do Mobile */}
             <div className="space-y-6 py-6 px-5">
               <div>
                 <a
@@ -365,7 +644,10 @@ export default function Header() {
                 </a>
                 <p className="mt-6 text-center text-base font-medium text-gray-500">
                   Já tem uma conta?{' '}
-                  <a href="#" className="text-brand-primary hover:text-brand-secondary">
+                  <a
+                    href="#"
+                    className="text-brand-primary hover:text-brand-secondary"
+                  >
                     Login
                   </a>
                 </p>
